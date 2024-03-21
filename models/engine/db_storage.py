@@ -1,6 +1,7 @@
 #!/usr/bin/python3
 """Module contains class DBStorage for database storage engine"""
 import os
+from datetime import datetime
 from models.base_model import BaseModel, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
@@ -55,7 +56,7 @@ class DBStorage:
             # Add class name to the dictionary
             dictionary['__class__'] = type(obj).__name__
             # Use object id as dictionary key
-            key = "{}.{}".format(dictionary['__class__'], obj.id)
+            key = f"{obj.__class__.__name__}.{obj.id}"
             obj_dictionary[key] = dictionary
 
             """

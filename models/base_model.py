@@ -11,8 +11,9 @@ Base = declarative_base()
 class BaseModel:
     """A base class for all hbnb models"""
     id = Column(String(60), primary_key=True, nullable=False)
-    created_at = Column(DateTime, nullable=False, default=datetime.utcnow())
-    updated_at = Column(DateTime, nullable=False, default=datetime.utcnow())
+    created_at = Column(DateTime, nullable=False, default=datetime.utcnow)
+    updated_at = Column(DateTime, nullable=False,
+                        default=datetime.utcnow, onupdate=datetime.utcnow)
 
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
@@ -46,12 +47,15 @@ class BaseModel:
         """Convert instance into dict format"""
         dictionary = {}
         dictionary.update(self.__dict__)
-        dictionary.update({'__class__':
-                           (str(type(self)).split('.')[-1]).split('\'')[0]})
-        if '_sa_instance_state' in dictionary.keys():
-            dictionary.pop('_sa_instance_state', None)
-        dictionary['created_at'] = self.created_at.isoformat()
-        dictionary['updated_at'] = self.updated_at.isoformat()
+
+        dictionary.pop('_sa_instance_state', None)
+
+        for key, value in dictionary.items():
+            if isinstance(value, datetime):
+                dictionary[key] = value.isoformat()
+
+        dictionary['__class__'] = (str(type(self)).split('.')
+                                   [-1]).split('\'')[0]
 
         return dictionary
 
