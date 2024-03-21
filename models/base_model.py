@@ -52,6 +52,7 @@ class BaseModel:
             dictionary.pop('_sa_instance_state', None)
         dictionary['created_at'] = self.created_at.isoformat()
         dictionary['updated_at'] = self.updated_at.isoformat()
+
         return dictionary
 
     def delete(self):

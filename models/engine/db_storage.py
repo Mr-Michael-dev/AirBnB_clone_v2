@@ -1,7 +1,7 @@
 #!/usr/bin/python3
 """Module contains class DBStorage for database storage engine"""
 import os
-from base_model import BaseModel, Base
+from models.base_model import BaseModel, Base
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker, scoped_session
 
@@ -38,14 +38,31 @@ class DBStorage:
 
         obj_dictionary = {}
         if cls is None:
-            objs = self.__session.query().all()
+            objs = self.__session.query(Base).all()
         else:
+            if isinstance(cls, str):
+                cls = globals().get(cls)
             objs = self.__session.query(cls).all()
 
         for obj in objs:
+            dictionary = {}
+            for column in obj.__mapper__.columns:
+                value = getattr(obj, column.name)
+                # Convert datetime objects to ISO format
+                if isinstance(value, datetime):
+                    value = value.isoformat()
+                dictionary[column.name] = value
+            # Add class name to the dictionary
+            dictionary['__class__'] = type(obj).__name__
+            # Use object id as dictionary key
+            key = "{}.{}".format(dictionary['__class__'], obj.id)
+            obj_dictionary[key] = dictionary
+
+            """
             key = "{}.{}".format(obj.to_dict()['__class__'], obj.id)
             value = obj
             obj_dictionary[key] = value
+            """
 
         return obj_dictionary
 
@@ -78,7 +95,7 @@ class DBStorage:
         from models.review import Review
 
         # create all tables in the database
-        Base.metadata.create_all(engine)
+        Base.metadata.create_all(self.__engine)
 
         # create a new session with sessionmaker
         Session = sessionmaker(bind=self.__engine, expire_on_commit=False)
