@@ -142,9 +142,8 @@ class HBNBCommand(cmd.Cmd):
                 kwargs[key] = value
 
         new_instance = HBNBCommand.classes[c_name](**kwargs)
-        storage.save()
+        new_instance.save()
         print(new_instance.id)
-        storage.save()
 
     def help_create(self):
         """ Help information for the create method """
@@ -229,8 +228,10 @@ class HBNBCommand(cmd.Cmd):
                 print("** class doesn't exist **")
                 return
 
-            objects_dict = storage.all(cls=args)
+            c_name = HBNBCommand.classes[args]
+            objects_dict = storage.all(c_name)
             for key, obj in objects_dict.items():
+                # if key.split('.')[0] == args:
                 print_list.append(str(obj))
         else:
             objects_dict = storage.all()

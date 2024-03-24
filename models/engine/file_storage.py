@@ -11,13 +11,26 @@ class FileStorage:
     def all(self, cls=None):
         """Returns a dictionary of models currently in storage"""
         if cls is None:
-            return FileStorage.__objects
+            return self.__objects
         else:
+            if type(cls) is str:
+                cls = globals().get(cls)
             filtered_objs = {}
-            for obj_id, obj in FileStorage.__objects.items():
-                if isinstance(obj, cls):
+            for obj_id, obj in self.__objects.items():
+                if type(obj_id) is cls:
                     filtered_objs[obj_id] = obj
             return filtered_objs
+            """
+        if cls:
+            if type(cls) == str:
+                cls = eval(cls)
+            my_dict = {}
+            for key, value in self.__objects.items():
+                if type(value) == cls:
+                    my_dict[key] = value
+            return my_dict
+        return self.__objects
+        """
 
     def new(self, obj):
         """Adds new object to storage dictionary"""
@@ -43,10 +56,10 @@ class FileStorage:
         from models.review import Review
 
         classes = {
-                    'BaseModel': BaseModel, 'User': User, 'Place': Place,
-                    'State': State, 'City': City, 'Amenity': Amenity,
-                    'Review': Review
-                  }
+                'BaseModel': BaseModel, 'User': User, 'Place': Place,
+                'State': State, 'City': City, 'Amenity': Amenity,
+                'Review': Review
+                }
         try:
             temp = {}
             with open(FileStorage.__file_path, 'r') as f:
