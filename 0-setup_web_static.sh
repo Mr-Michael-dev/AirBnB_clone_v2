@@ -14,26 +14,9 @@ else
 fi
 
 # set up folder structure
+echo "######"
 echo "setting up folder structure"
-if [ ! -e "/data/" ]; then
-	mkdir /data/
-fi
-
-if [ ! -e "/data/webstatic/" ]; then
-	mkdir /data/webstatic/
-fi
-
-if [ ! -e "/data/webstatic/releases/" ]; then
-	mkdir /data/webstatic/releases/
-fi
-
-if [ ! -e "/data/webstatic/shared/" ]; then
-	mkdir /data/webstatic/shared/
-fi
-
-if [ ! -e "/data/webstatic/releases/test/" ]; then
-	mkdir /data/webstatic/releases/test/
-fi
+sudo mkdir -p /data/web_static/releases/test /data/web_static/shared
 
 # create a fake HTML file to text Nginx configuration
 cat << EOF | sudo tee /data/web_static/releases/test/index.html
@@ -48,9 +31,33 @@ EOF
 
 # create symbolic link between current and /test/ folder
 if [ -L /data/web_static/current ]; then
-	rm /data/web_static/current
+	sudo rm /data/web_static/current
 fi
-ln -s /data/web_static/current /data/web_static/releases/test/
+sudo ln -s /data/web_static/releases/test/ /data/web_static/current
 
 # give ownership to the user and group recursively
 sudo chown -R ubuntu:ubuntu /data/
+
+# Update the Nginx configuration to serve the content of /data/web_static/current/ to hbnb_static
+echo "##### creating server block #####"
+cat << EOF | sudo tee /etc/nginx/sites-available/web_static
+server {
+	listen 80;
+	server_name michaeloyedeposervices.tech;
+
+	location /hbnb_static/ {
+	    alias /data/web_static/current/;
+	}
+}
+EOF
+
+# Symlink the configuration file to sites-enabled
+sudo ln -s /etc/nginx/sites-available/web_static /etc/nginx/sites-enabled/
+
+# Restart Nginx to apply the change
+echo "###### Restaring Nginx ######"
+sudo service nginx restart
+
+sleep 3
+
+echo "###### Nginx restarted. All set ######"
