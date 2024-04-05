@@ -12,15 +12,13 @@ class FileStorage:
         """Returns a dictionary of models currently in storage"""
         if cls is None:
             return self.__objects
-        else:
-            if type(cls) is str:
-                cls = globals().get(cls)
-            filtered_objs = {}
-            for obj_id, obj in self.__objects.items():
-                if type(obj_id) is cls:
-                    filtered_objs[obj_id] = obj
-            return filtered_objs
-            """
+        cls_name = cls.__name__
+        filtered_objs = {}
+        for obj_id, obj in self.__objects.items():
+            if obj_id.strip('.')[0] == cls_name:
+                filtered_objs[obj_id] = obj
+        return filtered_objs
+        """
         if cls:
             if type(cls) == str:
                 cls = eval(cls)

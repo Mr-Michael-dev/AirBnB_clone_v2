@@ -40,16 +40,8 @@ sudo chown -R ubuntu:ubuntu /data/
 
 # Update the Nginx configuration to serve the content of /data/web_static/current/ to hbnb_static
 echo "##### creating server block #####"
-cat << EOF | sudo tee /etc/nginx/sites-available/web_static
-server {
-	listen 80;
-	server_name michaeloyedeposervices.tech;
-
-	location /hbnb_static/ {
-	    alias /data/web_static/current/;
-	}
-}
-EOF
+cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
+sed '/^location \/,/^}$/a\n\t location /hbnb_static/ {\n    alias /data/web_static/current/;\n    }' /etc/nginx/sites-available/default
 
 # Symlink the configuration file to sites-enabled
 sudo ln -s /etc/nginx/sites-available/web_static /etc/nginx/sites-enabled/
