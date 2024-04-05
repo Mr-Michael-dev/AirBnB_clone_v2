@@ -2,11 +2,11 @@
 # installs fabric to machine
 
 pip3 uninstall -y Fabric
-sudo apt-get -y install libffi-dev
-sudo apt-get -y install libssl-dev
-sudo apt-get -y install build-essential
-sudo apt-get -y install python3.4-dev
-sudo apt-get -y install libpython3-dev
+apt-get -y install libffi-dev
+apt-get -y install libssl-dev
+apt-get -y install build-essential
+apt-get -y install python3.4-dev
+apt-get -y install libpython3-dev
 pip3 install pyparsing
 pip3 install appdirs
 pip3 install setuptools==40.1.0
