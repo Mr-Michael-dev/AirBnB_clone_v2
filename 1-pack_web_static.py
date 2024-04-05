@@ -24,7 +24,8 @@ def do_pack():
 
     arc_path = os.path.join("versions", archive_name)
 
-    result = fabric.operations.local("tar -czvf {} {}".format(arc_path, directory), capture=True)
+    result = fabric.operations.local("tar -czvf {} {}".format(
+             arc_path, directory), capture=True)
 
     if result.failed:
         return None
