@@ -10,15 +10,17 @@ import os
 
 def do_pack():
     """
-    Adds all the files in the folder web_static to the final archive
+    Creates a timestamped .tgz archive
+    of the files in the web_static folder.
     """
+
     now = datetime.datetime.now()
     archive_name = "web_static_{}.tgz".format(now.strftime("%Y%m%d%H%M%S"))
     directory = "web_static"
     arc_path = "./versions/{}".format(archive_name)
 
-    if not os.path.exists(./versions):
-        os.makedirs(./versions)
+    if not os.path.exists("./versions"):
+        os.makedirs("./versions")
 
     result = local("tar -czvf {} {}".format(arc_path, directory), capture=True)
 
