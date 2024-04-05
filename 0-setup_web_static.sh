@@ -53,3 +53,5 @@ sudo service nginx restart
 sleep 3
 
 echo "###### Nginx restarted. All set ######"
+
+exit 0
