@@ -33,6 +33,7 @@ def do_pack():
     else:
         return path
 
+
 def do_deploy(archive_path):
     if not local("test -e {}".format(archive_path)).succeeded:
         return False
@@ -41,19 +42,19 @@ def do_deploy(archive_path):
         put(archive_path, '/tmp/')
         # Uncompress the archive
         archive_filename = archive_path.split('/')[-1]
-        folder_name = archive_filename.replace('.tgz', ''
-                      ).replace('.tar.gz', '')
+        folder_name = archive_filename.replace(
+                      '.tgz', '').replace('.tar.gz', '')
         run("mkdir -p /data/web_static/releases/{}".format(folder_name))
         run("tar -xzf /tmp/{} -C /data/web_static/releases/{}/".format(
             archive_filename, folder_name))
-        
+
         # Delete the archive from the web server
         run("rm /tmp/{}".format(archive_filename))
-        
+
         # Delete the symbolic link /data/web_static/current from the web server
         sudo("rm /data/web_static/current", warn_only=True)
 
-        # Create a new symbolic link /data/web_static/current linked to the new version
+        # Create a new symbolic link, linked to the new version
         sudo("ln -s /data/web_static/releases/{}/ /data/web_static/current"
              .format(folder_name))
 
