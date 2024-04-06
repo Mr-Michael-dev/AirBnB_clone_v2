@@ -2,6 +2,7 @@
 """
 Fabric script that generates a .tgz archive
 from the contents of the web_static folder of AirBnB Clone repo
+Deploys the archive to web servers
 """
 from fabric.api import local, put, env, run, sudo
 import datetime
@@ -35,6 +36,10 @@ def do_pack():
 
 
 def do_deploy(archive_path):
+    """
+    distributes an archive to web servers
+    False if the file at the path archive_path doesn’t exist
+    """
     if not local("test -e {}".format(archive_path)).succeeded:
         return False
 
