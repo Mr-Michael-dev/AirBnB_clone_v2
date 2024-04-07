@@ -56,8 +56,17 @@ def do_deploy(archive_path):
         # Delete the archive from the web server
         run("rm /tmp/{}".format(archive_filename))
 
+        # move all files and directory from webstatic directory
+        # in archive, into /releases/
+
+        run("mv /data/web_static/releases/{}/web_static/*\
+            /data/web_static/releases/{}/".format(folder_name, folder_name))
+
+        run("rm -rf /data/web_static/releases/{}/web_static"
+            .format(folder_name))
+
         # Delete the symbolic link /data/web_static/current from the web server
-        sudo("rm /data/web_static/current", warn_only=True)
+        sudo("rm -rf /data/web_static/current", warn_only=True)
 
         # Create a new symbolic link, linked to the new version
         sudo("ln -s /data/web_static/releases/{}/ /data/web_static/current"
