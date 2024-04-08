@@ -29,22 +29,15 @@ cat << EOF | sudo tee /data/web_static/releases/test/index.html
 </html>
 EOF
 
-# create symbolic link between current and /test/ folder
-if [ -L /data/web_static/current ]; then
-	sudo rm /data/web_static/current
-fi
-sudo ln -s /data/web_static/releases/test/ /data/web_static/current
+sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 
 # give ownership to the user and group recursively
-sudo chown -R ubuntu:ubuntu /data/
+sudo chown -hR ubuntu:ubuntu /data/
 
 # Update the Nginx configuration to serve the content of /data/web_static/current/ to hbnb_static
 echo "##### creating server block #####"
 cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
 sed '/^location \/,/^}$/a\n\t location /hbnb_static/ {\n    alias /data/web_static/current/;\n    }' /etc/nginx/sites-available/default
-
-# Symlink the configuration file to sites-enabled
-sudo ln -s /etc/nginx/sites-available/web_static /etc/nginx/sites-enabled/
 
 # Restart Nginx to apply the change
 echo "###### Restaring Nginx ######"
