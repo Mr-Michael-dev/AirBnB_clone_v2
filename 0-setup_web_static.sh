@@ -37,7 +37,7 @@ sudo chown -hR ubuntu:ubuntu /data/
 # Update the Nginx configuration to serve the content of /data/web_static/current/ to hbnb_static
 echo "##### creating server block #####"
 cp /etc/nginx/sites-available/default /etc/nginx/sites-available/default.bak
-sed '/^location \/,/^}$/a\n\t location /hbnb_static/ {\n    alias /data/web_static/current/;\n    }' /etc/nginx/sites-available/default
+sed -i '/^location \/,/^}$/a\n\t location /hbnb_static/ {\n    alias /data/web_static/current/;\n    }' /etc/nginx/sites-available/default
 
 # Restart Nginx to apply the change
 echo "###### Restaring Nginx ######"
