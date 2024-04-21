@@ -17,6 +17,7 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
+        from models import storage
         if kwargs:
             for key, value in kwargs.items():
                 if key == 'created_at' or key == 'updated_at':
@@ -26,37 +27,43 @@ class BaseModel:
                     setattr(self, key, value)
             if 'id' not in kwargs:
                 self.id = str(uuid.uuid4())
+            storage.new(self)
         else:
+            from models import storage
             self.id = str(uuid.uuid4())
-            self.created_at = self.updated_at = datetime.utcnow()
+            self.created_at = datetime.utcnow()
+            self.updated_at = datetime.utcnow()
+            storage.new(self)
 
     def __str__(self):
         """Returns a string representation of the instance"""
         dic = self.__dict__.copy()
         dic.pop("_sa_instance_state", None)
-        cls = (str(type(self)).split('.')[-1]).split('\'')[0]
-        return '[{}] ({}) {}'.format(cls, self.id, dic)
+        # cls = (str(type(self)).split('.')[-1]).split('\'')[0]
+        # return '[{}] ({}) {}'.format(cls, self.id, dic)
+        my_str = f"[{self.__class__.__name__}] ({self.id}) {dic}"
+
+        return my_str
 
     def save(self):
         """Updates updated_at with current time when instance is changed"""
         from models import storage
         self.updated_at = datetime.utcnow()
-        storage.new(self)
         storage.save()
 
     def to_dict(self):
         """Convert instance into dict format"""
         dictionary = {}
         dictionary.update(self.__dict__)
+        dictionary.update({'__class__': (str(type(self)).split('.')
+                          [-1]).split('\'')[0]})
 
-        dictionary.pop('_sa_instance_state', None)
+        if '_sa_instance_state' in dictionary.keys():
+            dictionary.pop('_sa_instance_state', None)
 
         for key, value in dictionary.items():
             if isinstance(value, datetime):
                 dictionary[key] = value.isoformat()
-
-        dictionary['__class__'] = (str(type(self)).split('.')
-                                   [-1]).split('\'')[0]
 
         return dictionary
 
