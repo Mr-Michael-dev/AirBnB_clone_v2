@@ -48,6 +48,7 @@ section.filters h4{
 
 section div.locations .popover,  section div.amenities .popover{
     position: absolute;
+    overflow-y: auto;
     max-height: 300px;
     top: 55px;
     width: 86%;
